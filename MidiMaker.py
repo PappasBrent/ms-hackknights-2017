@@ -5,14 +5,14 @@ mf = MIDIFile(1)     # only 1 track
 track = 0   # the only track
 
 time = 0    # start at the beginning
-mf.addTrackName(track, time, "Sample Track")
+mf.addTrackName(track, time, "Harmonized Track")
 mf.addTempo(track, time, 120)
 
 
 notesFile = open("Notes.out", 'r')
 
 
-# add some notes
+# Default values
 channel = 0
 pitch = 0
 duration = 1
@@ -24,10 +24,7 @@ for char in notesFile.readline():
     mf.addNote(track, channel, ord(char), time, duration, volume)
     time+=1
 
-# for i in range(128):
-#     pitch = i
-#     time = i
-#     mf.addNote(track, channel, pitch, time, duration, volume)
+
 
 # pitch = 60           # C4 (middle C)
 # time = 0             # start on beat 0
