@@ -1,7 +1,11 @@
 var diameter = 40;
 var radius = diameter / 2;
 
+var el = $("#note_characters");
+
 var noteInput = "CcDeEFfGaAbB";
+
+noteInput = el.html();
 
 // noteInput = prompt("Enter notes");
 
