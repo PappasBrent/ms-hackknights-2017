@@ -12,3 +12,11 @@ h1 {
     margin-top: 20px;
     padding: 50px;
 }
+
+#note_characters {
+    visibility: hidden;
+}
+
+#number_of_notes {
+    visibility: hidden;
+}

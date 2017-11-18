@@ -1,13 +1,7 @@
 var diameter = 40;
 var radius = diameter / 2;
 
-var el = $("#note_characters");
-
-var noteInput = "CcDeEFfGaAbB";
-
-noteInput = el.html();
-
-// noteInput = prompt("Enter notes");
+var noteInput = "";
 
 var xPadding = radius * 2;
 var yPadding = radius * 3;
@@ -56,6 +50,10 @@ function draw_notes(x, y, notes, noteRadius) {
         }
         circle(posX, posY, noteRadius);
     }
+}
+
+function preload() {
+    noteInput = $("#note_characters").text()
 }
 
 function setup() {
