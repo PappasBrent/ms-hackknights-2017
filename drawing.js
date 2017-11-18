@@ -1,4 +1,5 @@
-var radius = 20;
+var diameter = 40;
+var radius = diameter / 2;
 
 var noteInput = "CcDeEFfGaAbB";
 
@@ -22,8 +23,8 @@ var noteHeights = {
     'G': radius * 4,
 };
 
-function circle(x, y, r) {
-    ellipse(x, y, r, r);
+function circle(x, y, d) {
+    ellipse(x, y, d / 2, d / 2);
 }
 
 function draw_lines(x, y, noteRadius, numNotes) {
@@ -41,7 +42,7 @@ function draw_notes(x, y, notes, noteRadius) {
     numNotes = notes.length;
     for (var i = 0; i < numNotes; i++) {
         currentNote = notes[i];
-        posX = x + (i * noteRadius * 2) + noteRadius;
+        posX = x + (i * xPadding) + noteRadius;
         posY = y + noteHeights[currentNote] - noteRadius;
         if (currentNote == currentNote.toLowerCase()) {
             fill(255, 0, 128);
@@ -62,8 +63,8 @@ function setup() {
 function draw() {
     fill(155, 155, 155);
     // rect(-1, -1, width + 1, height + 1);
-    stroke(155,155,155);
+    stroke(155, 155, 155);
     draw_lines(0, 100, radius, noteInput.length);
-    stroke(0,0,0);
+    stroke(0, 0, 0);
     draw_notes(0, 100, noteInput, radius);
 }
