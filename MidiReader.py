@@ -1,3 +1,4 @@
+
 import re, math
 
 line = "1926 On ch=1 n=60 v=114"
@@ -33,8 +34,8 @@ for line in lines:
     # print(vals)
     if not vals:
         continue
-    # if len(vals[0]) < 4:
-    #     continue
+    if len(vals[0]) < 1:
+        continue
 
     # t=vals[0][0]
     # ch=vals[0][1]
