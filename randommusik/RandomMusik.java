@@ -3,6 +3,7 @@ package randommusik;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import javax.sound.midi.*;
 
 /**
  * <h1>RandomMusik</h1>
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @since 11/10/2017
  */
 public class RandomMusik {
-
+    
     /**
      * Makes use of the Musical Randomization
      * @param args
@@ -29,11 +30,30 @@ public class RandomMusik {
      */
     public static void main(String[] args) throws InterruptedException, IOException
     {
-        //Sheet Musik
+        //Presentation!
+        String py1 = System.getProperty("user.dir")+"\\src\\randommusik\\";
+        String py2 = System.getProperty("user.dir")+"\\src\\randommusik\\";
+        ProcessBuilder pb1 = new ProcessBuilder("python", "MidiReader.py");
+        pb1.directory(new File(py1));
+        pb1.redirectError();
+        
+        //Sheet Musik (1)
         MusicalContainer m = new MusicalContainer(0);
-        m.compose(20);
+        //m.compose(16);
+        //Sheet Musik (2)
+        //MusicalContainer k = new MusicalContainer(9);
+        //k.compose(16);
+        //Musik Analyzer
         
+        ProcessBuilder pb2 = new ProcessBuilder("python", "MidiChanger.py");
+        pb2.directory(new File(py2));
+        pb2.redirectError();
+        //Process p1 = Runtime.getRuntime().exec("python");
         
+        String filename = System.getProperty("user.dir")+"\\src\\randommusik\\Notes.in";
+        m.getSimilar(MusicalContainer.getStringFromFile(filename));
+        
+        //Process p2 = Runtime.getRuntime().exec("python"+py2);
         /* ALL BEFORE
         if(trial == -1 || trial == 1)
         {

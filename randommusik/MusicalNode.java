@@ -119,4 +119,25 @@ public class MusicalNode
         }
 
     }
+    
+    /**
+     * Will analyze the harmonies between the two nodes and return 
+     * 
+     * @param m1 the first musical note for comparison
+     * @param m2 the second musical note for comparison
+     * @return integer value representing harmony of the two
+     */
+    public static int checkHarmony(MusicalNode m1, MusicalNode m2)
+    {
+        int i, harmony1=0, harmony2=0;
+        
+        for(i=0; m1.harmonic[0][i]!=m2.note; i++);
+        harmony1 = m1.harmonic[1][i];
+        
+        for(i=0; m2.harmonic[0][i]!=m1.note; i++);
+        harmony2 = m2.harmonic[1][i];
+        
+        return ((harmony1+harmony2)/2);
+    }
+    
 }

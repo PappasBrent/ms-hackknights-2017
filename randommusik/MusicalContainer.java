@@ -1,9 +1,10 @@
 package randommusik;
 
-import static java.awt.JobAttributes.DestinationType.FILE;
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 /**
  * <h1>MusicalContainer</h1>
@@ -181,8 +182,6 @@ public class MusicalContainer
        int tone;
        temp = this.note;
        
-       System.out.print("Tone Shifts: ");
-       
        for(int i=0; i<length; i++)
        {
            tone = this.getKey();
@@ -198,7 +197,6 @@ public class MusicalContainer
                change = (int)(Math.random()*100);
                if(change<50)
                {
-                   System.out.print("+ ");
                    this.harmonize();
                }
                else
@@ -300,6 +298,88 @@ public class MusicalContainer
                 minTone=i;
         
         this.harmonize(minTone);
+   }
+   
+   /**
+    * Will open a file and convert the input to a string
+    * 
+    * @param filename
+    * @return
+    * @throws IOException 
+    */
+   public static String getStringFromFile(String filename) throws IOException
+   {
+       String s;
+       Scanner sc = new Scanner(new File(filename));
+       
+       s=sc.next();
+       
+       return s;
+   }
+   
+   /**
+    * Takes a song posed as an string of note characters and from that will find the average
+    * tonal shift of that song and generate a new song based on that tonal shift
+    * 
+    * @param str A string that will be analyzed and semi-replicated
+    * @throws InterruptedException
+    * @throws IOException
+    */
+   public void getSimilar(String str) throws IOException, InterruptedException
+   {
+       //overload previously with filename
+       int size;
+       if(str.length()%2==0)
+           size=str.length()/2;
+       else
+           size=str.length()/2+1;
+       int[] generationHarmony = new int[size];
+       ArrayList finArray = new ArrayList();
+       char[][] breakDown = new char[size][2];
+       
+       for(int i=0, j=0; j<str.length(); j++)
+       {
+           if(j!=0 && j%2==0)
+               i++;
+           breakDown[i][j%2]=str.charAt(j);
+           //System.out.println(i +", "+j%2);
+       }
+       
+       for(int i=0; i<size; i++)
+       {
+           if(str.length()%2!=0 && i==size-1)
+               generationHarmony[i] = getHarmonic(breakDown[i][0], breakDown[0][1]);
+           else
+               generationHarmony[i] = getHarmonic(breakDown[i][0], breakDown[i][1]);
+       }
+       
+       for(int i=0; i<generationHarmony.length; i++)
+       {
+           if(i==0)
+               finArray.add(getRandomHarmonic(generationHarmony[0]));
+           else
+               finArray.add(getRandomHarmonic(generationHarmony[i-1]));
+               
+           finArray.add(getRandomHarmonic(generationHarmony[i]));
+       }
+       
+       //this.playComposition(finArray);
+       this.printToFile(System.getProperty("user.dir")+"\\src\\randommusik\\Notes.out", finArray);
+   }
+   
+   /**
+    * Will check the harmonic array of each node for the harmony of each
+    * 
+    * @param c1 The first note character to compare
+    * @param c2 The second note character to compare
+    * @return integer value signifying the harmony of the two values
+    */
+   public int getHarmonic(char c1, char c2)
+   {
+       MusicalNode m1 = new MusicalNode(c1);
+       MusicalNode m2 = new MusicalNode(c2);
+       
+       return MusicalNode.checkHarmony(m1, m2);
    }
    
    /**
@@ -421,32 +501,110 @@ public class MusicalContainer
    }
    
    /**
-    * Prints out the composition of notes as characters to a file
+    * Prints out the composition of notes as characters to a file, and plays them after
+    * 
+    * @param length indicates the length of the song being composed
     * 
     * @throws IOException
+    * @throws InterruptedException
     */
-   public void printToFile(int length) throws IOException
+   public void printToFile(int length) throws IOException, InterruptedException
    {
-       String file = System.getProperty("user.dir")+"\\src\\randommusik\\notes.txt";
+       String file1 = System.getProperty("user.dir")+"\\src\\randommusik\\hackknights\\hackknights\\paintStaffs.html";
+       String file2 = System.getProperty("user.dir")+"\\src\\randommusik\\src.html";
+       
+       //default text of notes.html to notes.txt
+       defaultFile(file1, file2);
+       
+       String file = file1;
+       
+       
+       FileWriter f = new FileWriter(file, true);
+       BufferedWriter w = new BufferedWriter(f);
+       
+       MusicalNode temp;
+       temp=this.note;
+       w.write("\n    <div id=\"number_of_notes\">"+length+"</div>\n");
+       //Set up to print sheet music
+       
+       w.write("    <div id=\"note_characters\">");
+       
+       while(temp.next!=null)
+       {
+           w.write(temp.note);
+           temp=temp.next;
+       }
+       
+       w.write("</div>");
+       w.write("\n</body>\n</html>");
+       
+       w.close();
+       f.close();
+       
+       openFile(file1);
+       
+       this.playComposition();
+       
+   }
+   
+   public void printToFile(String file, ArrayList a) throws IOException
+   {
        FileWriter f = new FileWriter(file);
        BufferedWriter w = new BufferedWriter(f);
        
        String s="";
        
-       MusicalNode temp;
-       temp=this.note;
-       s+=(length+"\n");
-       //Set up to print sheet music
-       
-       while(temp.next!=null)
-       {
-           s+=(temp.note);
-           temp=temp.next;
-       }
+       for(Object o: a)
+           s+=o.toString();
        
        w.write(s);
+       
        w.close();
        f.close();
+   }
+   
+   /**
+    * Will open the HTML file generated by the printToFile function
+    * 
+    * @see printToFile
+    * @param f the html file to be opened
+    * @throws IOException 
+    */
+   public void openFile(String f) throws IOException
+   {
+        File html = new File(f);
+        Desktop.getDesktop().browse(html.toURI());
+   }
+   
+   /**
+    * Will default the HTML file to original text
+    * 
+    * @param f1 the final file
+    * @param f2 the file containing template text
+    * @throws IOException 
+    */
+   public void defaultFile(String f1, String f2) throws IOException
+   {
+       StringBuilder content = new StringBuilder();
+       String s;
+       
+       FileReader fr = new FileReader(f2);
+       BufferedReader br = new BufferedReader(fr);
+       
+       FileWriter fw = new FileWriter(f1);
+       BufferedWriter bw = new BufferedWriter(fw);
+       
+       while((s=br.readLine())!=null)
+       {
+           content.append(s);
+       }
+       
+       //System.out.println(content.toString());
+       
+       bw.write(content.toString());
+       
+       bw.close();
+       br.close();
    }
    
    /**
@@ -469,4 +627,24 @@ public class MusicalContainer
        TimeUnit.MILLISECONDS.sleep(500);
        System.out.println();
    }
+   
+   /**
+    * Plays notes directly from an ArrayList
+    * 
+    * @param a an arraylist containing notes to play
+    * @throws InterruptedException 
+    */
+   public void playComposition(ArrayList a) throws InterruptedException
+   {
+       System.out.print("Performance: ");
+       
+       for(Object o: a)
+       {
+           PlayNotes.play((char)o);
+           TimeUnit.MILLISECONDS.sleep(250);
+       }
+       TimeUnit.MILLISECONDS.sleep(500);
+       System.out.println();
+   }
+   
 }
